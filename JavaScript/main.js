@@ -168,11 +168,13 @@ function scoreTest () {
 	}
 	console.log("Current Scores: "+returnStringArray(results));
 	questionsAsked[7].push("thisScore : " + results[results.length-1]);
-	// the following checks if the test should end early
-	var newRange = 2;
+	// The following checks if the test should end early
+	// This section needs further testing to identify optimal end criteria.
+	// Currently set to make the test moderately long, as discarding data is relatively trivial.
+	var newRange = 7;
 	if (results.length > questionLengths[0].length+newRange) {
-		var testLength = 2;
-		var upperbound = 2;
+		var testLength = 7;
+		var upperbound = 5;
 		var notPerf = 0;
 		for (var x = 0; x < testLength; x++) {
 			if (results[results.length-(x+1)] > 1/questionLengths[1][results.length-(x+1)-questionLengths[0].length]) {
