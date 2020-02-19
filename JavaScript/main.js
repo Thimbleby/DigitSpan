@@ -1,6 +1,6 @@
 /*MIT License
 
-Copyright (c) 2017 Isaac James Thimbleby
+Copyright (c) 2020 Isaac James Thimbleby
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@ SOFTWARE./*
 //---------------------------------------------------------------------------------- 
 //	ver   	date        rfc     auth    comments                                         
 // --------------------------------------------------------------------------------- 
-//	0.1.0   20170927    IT      IT      
+//	0.1.2   20200219    IT      IT      
 
 // **********************
 // Working Memory
@@ -94,7 +94,7 @@ var item = -1;
 // ...[6] is the correct answer to each test item (thisSequence is the reverse of the current answer)
 // [7] & [8] are used for debugging/QA, see scoreTest() for removal --XXXXXXX--
 var dStart = new Date();
-var questionsAsked = [dStart.getTime(),[],[],[[]],[[]],[],[],[],[]];
+var questionsAsked = [dStart.getTime(),[],[],[[]],[[]],[],[],[],[],[]];
 // difficulty is the current test item number
 var difficulty = 0;
 // sequenceFinished is a boolean that is true if no sequence is currently being displayed.
@@ -201,6 +201,20 @@ function lengthRemembered() {
 		testLR.push(Math.max(questionsAsked[6][i].length-levenshtein(questionsAsked[5][i].join(''), questionsAsked[6][i].join('')), 0));
 	}
 	return testLR;
+}
+
+function firstIncorrect() {
+	var first = 0;
+	
+	for (var x = 0; x < questionsAsked[8].length; x++) {
+		if (questionsAsked[8][x] == 0) {
+			first++;
+		} else {
+			return first;
+		}
+	}
+	
+	return first;
 }
 
 function numpadText (colour) {
@@ -633,7 +647,7 @@ function numPad () {
 							questionsAsked[3].push([]);
 							questionsAsked[4].push([]);
 							questionsAsked[5].push(currentEntry);
-							scoreTest();
+							questionsAsked[8] = scoreTest();
 							currentEntry = [];
 					
 							d3.select("#submit").transition()
@@ -656,7 +670,7 @@ function numPad () {
 							questionsAsked[3].push([]);
 							questionsAsked[4].push([]);
 							questionsAsked[5].push(currentEntry);
-							scoreTest();
+							questionsAsked[8] = scoreTest();
 							currentEntry = [];
 					
 							d3.select("#submit").transition()
@@ -851,14 +865,17 @@ function main() {
 							.attr("fill","black")
 							.attr("id", "questionText")
 							.call(wrap,(w-indent))*/
+							
+		console.log('First incorrect answer: ' + firstIncorrect())
 		//console.log(questionsAsked);
-		dataToSubmit = {"version" : "v0.1.0", "startTime" : questionsAsked[0],
+		dataToSubmit = {"version" : "v0.1.2", "startTime" : questionsAsked[0],
         "onStart" : questionsAsked[1],
         "onSequenceFinished" : questionsAsked[2],
         "buttonPushTimes" : questionsAsked[3],
         "buttonPushes" : questionsAsked[4],
         "answerSubmited" : questionsAsked[5],
-        "correctAnswer" : questionsAsked[6]};
+        "correctAnswer" : questionsAsked[6],
+        "results" : questionsAsked[8]};
         var dataToDownload = "{version : v0.1.1, startTime : "+ questionsAsked[0]+", onStart : "+ questionsAsked[1]+", onSequenceFinished : "+ questionsAsked[2]+", buttonPushTimes :"+ questionsAsked[3]+", buttonPushes : "+ questionsAsked[4]+", answerSubmited : "+ questionsAsked[5]+", correctAnswer : "+ questionsAsked[6]+"}";
 
 		console.log(dataToSubmit);
